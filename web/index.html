@@ -1,0 +1,439 @@
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+
+    <script type="text/javascript" charset="utf-8" src="https://cdn.jsdelivr.net/npm/@clappr/player@latest/dist/clappr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js" integrity="sha512-UXumZrZNiOwnTcZSHLOfcTs0aos2MzBWHXOHOuB0J/R44QB0dwY5JgfbvljXcklVf65Gc4El6RjZ+lnwd2az2g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js"></script>
+    <script src="https://unpkg.com/vue@next"></script>
+    <script src="ustvgotoken.js"></script>
+
+    <link href="player.css" rel="stylesheet" id="player-css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+</head>
+
+<body class="bg-dark text-white position-relative" id="body">
+
+    <div id="player-wrapper" class="player"></div>
+
+    <div id="app" class="position-absolute top-0 start-0">
+        <section v-show="visible">
+            <div v-show="activeChannel(index)" v-for="(show,index) in shows">
+                <button tabindex="-1" class="button">
+                    <a :href="'?v=' + index">
+                        <img width="269" :src="show.img" :alt="show.title">
+                    </a>
+                </button>
+            </div>
+        </section>
+    </div>
+
+<script>
+
+
+    //    http://www.reloltv.com/
+    //     123tvnow.com
+    //     https://github.com/iptv-restream/iptv-channels
+
+
+    //     https://h1.ustvgo.la/ABC/myStream/playlist.m3u8?wmsAuthSign=
+    //
+    //
+    //     https://h1.ustvgo.la/BBCAmerica/myStream/playlist.m3u8?wmsAuthSign=
+    //     https://h1.ustvgo.la/Bravo/myStream/playlist.m3u8?wmsAuthSign=c2VydmVyX3RpbWU9NC8yOC8yMDIxIDU6MjQ6MzggUE0maGFzaF92YWx1ZT1Ja044NXF1cUtodTUxSXE2OWJwbFlRPT0mdmFsaWRtaW51dGVzPTI0MA==
+    //     https://h1.ustvgo.la/Cinemax/myStream/playlist.m3u8?wmsAuthSign=c2VydmVyX3RpbWU9NC8yOC8yMDIxIDU6MjY6MDQgUE0maGFzaF92YWx1ZT0rWVFjQWN5QjJsT0tCTktjL0loNkVRPT0mdmFsaWRtaW51dGVzPTI0MA==
+    //     https://h1.ustvgo.la/CMT/myStream/playlist.m3u8?wmsAuthSign=c2VydmVyX3RpbWU9NC8yOC8yMDIxIDU6MjY6MzggUE0maGFzaF92YWx1ZT1yZGx0YllJdHJVcGVkVEhBekxhekhBPT0mdmFsaWRtaW51dGVzPTI0MA==
+    //     https://h1.ustvgo.la/CN/myStream/playlist.m3u8?wmsAuthSign=c2VydmVyX3RpbWU9NC8yOC8yMDIxIDU6MjY6NTYgUE0maGFzaF92YWx1ZT1zTGpPSDRkL2ZwMHNETmNPUE5lY1hnPT0mdmFsaWRtaW51dGVzPTI0MA==
+    //     https://h1.ustvgo.la/CW/myStream/playlist.m3u8?wmsAuthSign=c2VydmVyX3RpbWU9NC8yOC8yMDIxIDU6Mjc6MzkgUE0maGFzaF92YWx1ZT00SmZjL3dGdnRLdG0wWGZyczdzVU93PT0mdmFsaWRtaW51dGVzPTI0MA==
+    //     https://h1.ustvgo.la/Disney/myStream/playlist.m3u8?wmsAuthSign=c2VydmVyX3RpbWU9NC8yOC8yMDIxIDU6Mjg6MjUgUE0maGFzaF92YWx1ZT05ZDg5REREZW9JZmRlMlVuaHNhOWd3PT0mdmFsaWRtaW51dGVzPTI0MA==
+    //     https://h1.ustvgo.la/DisneyXD/myStream/playlist.m3u8?wmsAuthSign=c2VydmVyX3RpbWU9NC8yOC8yMDIxIDU6Mjg6NTAgUE0maGFzaF92YWx1ZT1ObmhPVUx4T3JvRnlYMW5na1k4WkxBPT0mdmFsaWRtaW51dGVzPTI0MA==
+
+    //     amc-live
+    //     cnbc
+    //     cnn
+    //     fxx
+
+    //     FXMovie
+    //     starz
+    //     fox
+    //     fox-news
+
+    //     HLN
+    //     Lifetime
+    //
+    //
+    //     Nickelodeon
+    //     Nicktoons
+    //     Oxygen
+    //     PBS
+    //     SECN
+
+    //     StarZ
+    //     SundanceTV
+    //     SYFY
+
+    //     TBS
+    //
+    //
+    //
+    //     YES
+
+
+    var rawShows = {
+        news: [
+            {
+                title: 'CNN',
+                //url: `https://h1.ustvgo.la/CNN/myStream/playlist.m3u8?wmsAuthSign=${ustvgotoken}`,
+                url: `https://cnn-cnninternational-1-de.samsung.wurl.com/manifest/playlist.m3u8`,
+                img: 'http://123tv.live/wp-content/uploads/2018/08/cnn-269x151.png'
+            },
+            {
+                title: 'BBC',
+                url: 'http://ott-cdn.ucom.am/s24/04.m3u8',
+                img: 'http://123tv.live/wp-content/uploads/2020/01/bbc-america-269x151.png'
+            },
+            {
+                title: 'CBS',
+                url: 'https://cbsnewshd-lh.akamaihd.net/i/CBSNHD_7@199302/master.m3u8',
+                img: 'http://123tv.live/wp-content/uploads/2018/08/cbsn-269x151.jpg'
+            },
+            {
+                title: 'ABC',
+                url: 'https://content.uplynk.com/channel/3324f2467c414329b3b0cc5cd987b6be.m3u8',
+                img: 'http://123tv.live/wp-content/uploads/2018/08/abc-269x151.jpg'
+            },
+            {
+                title: 'SKY',
+                url: 'http://skydvn-sn-mobile-prod.skydvn.com/skynews/1404/latest.m3u8',
+                img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvDZ6urGm3q1pjnKiNhEUDtD8AcHionSqY2g&usqp=CAU'
+            },
+            {
+                title: 'RT',
+                url: 'https://rt-usa.secure.footprint.net/1105.m3u8',
+                img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRY6T5mgkdBdd-cBGv8QnDmMLacXwg5FFTz6g&usqp=CAU'
+            },
+            {
+                title: 'FOX',
+                url: `https://h1.ustvgo.la/FOX/myStream/playlist.m3u8?wmsAuthSign=${ustvgotoken}`,
+                img: 'data:image/jpeg;base64,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'
+            },
+            {
+                title: 'Weather Channel',
+                url: `http://weather-lh.akamaihd.net/i/twc_1@92006/index_2400_av-p.m3u8`,
+                img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbl_H5-1r-MHfEuy_K7R96SUidciP1ZLvD2zzM0Ph_QCD0w1TwbsfJI2KLSd1Pj-RSwVU&usqp=CAU'
+            },
+
+        ],
+        reality: [
+            {
+                title: 'Red Bull',
+                url: 'https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master_3360.m3u8',
+                img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ00Quepr9MHVnBYoWUdGjYfKejQIx84KV3LpOqw8Zf92cWdDKrDf7Zl7aWGTk5nB6EiVg&usqp=CAU'
+            },
+            {
+                title: 'A&E',
+                url: 'https://bk7l2w4nlx53-hls-live.5centscdn.com/AETV/514c04b31b5f01cf00dd4965e197fdda.sdp/AETV/OBS11/chunks.m3u8',
+                img: 'http://123tv.live/wp-content/uploads/2018/08/ae-269x151.png'
+            },
+            {
+                title: 'AMC',
+                url: `https://h1.ustvgo.la/AMC/myStream/playlist.m3u8?wmsAuthSign=${ustvgotoken}`,
+                img: 'http://123tv.live/wp-content/uploads/2018/08/amc-269x151.png'
+            },
+            {
+                title: 'HGTV',
+                url: `https://h1.ustvgo.la/HGTV/myStream/playlist.m3u8?wmsAuthSign=${ustvgotoken}`,
+                img: 'http://123tv.live/wp-content/uploads/2018/08/HGTV-269x151.png'
+            },
+            {
+                title: 'TLC',
+                url: `https://h1.ustvgo.la/TLC/myStream/playlist.m3u8?wmsAuthSign=${ustvgotoken}`,
+                img: 'http://123tv.live/wp-content/uploads/2018/08/tlc-269x151.png'
+            },
+            {
+                title: 'DIY',
+                url: `https://h1.ustvgo.la/DIY/myStream/playlist.m3u8?wmsAuthSign=${ustvgotoken}`,
+                img: 'http://123tv.live/wp-content/uploads/2019/01/diy.png'
+            },
+            {
+                title: 'Travel',
+                url: `https://h1.ustvgo.la/Travel/myStream/playlist.m3u8?wmsAuthSign=${ustvgotoken}`,
+                img: 'http://123tv.live/wp-content/uploads/2018/08/Travel-269x151.png'
+            },
+            {
+                title: 'TruTV',
+                url: `https://h1.ustvgo.la/TruTV/myStream/playlist.m3u8?wmsAuthSign=${ustvgotoken}`,
+                img: 'http://123tv.live/wp-content/uploads/2018/08/TruTV-269x151.png'
+            },
+            {
+                title: 'FX',
+                url: `https://h1.ustvgo.la/FX/myStream/playlist.m3u8?wmsAuthSign=${ustvgotoken}`,
+                img: 'http://123tv.live/wp-content/uploads/2018/08/fx-269x151.png'
+            },
+            {
+                title: 'FXX',
+                url: `https://h1.ustvgo.la/FXX/myStream/playlist.m3u8?wmsAuthSign=${ustvgotoken}`,
+                img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSESZlb1AgkJX9Qg-4_65SstD_aCdp6vRt4tQ&usqp=CAU'
+            },
+            {
+                title: 'FXMovie',
+                url: `https://h1.ustvgo.la/FXMovie/myStream/playlist.m3u8?wmsAuthSign=${ustvgotoken}`,
+                img: 'data:image/png;base64,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'
+            },
+            {
+                title: 'SYFY',
+                url: `https://h1.ustvgo.la/SYFY/myStream/playlist.m3u8?wmsAuthSign=${ustvgotoken}`,
+                img: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBw8QDw4QDw8RDRAPDxAODg8QDxEQEBAWFxEWFhURFRUYHSghGRolHRYVITEhMSktLjAuFyA/OzMsNyg5LisBCgoKDg0OGxAQGi0mICUvLSsuLS0uLS0tLS0tLS0tLS0rLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0rLS0tLf/AABEIAKgBLAMBIgACEQEDEQH/xAAcAAEAAgIDAQAAAAAAAAAAAAAABgcFCAECBAP/xABKEAACAgEBBAUFCwgHCQAAAAAAAQIDBBEFBxIhBhMxQWE1UXF0gRQVIjJCVJGUsbPRNGJygpKhstIjM1JTc5OiFyQlQ1XBw9Ph/8QAGQEBAAMBAQAAAAAAAAAAAAAAAAIDBAEF/8QAJhEBAAICAQQBBQEBAQAAAAAAAAECAxEyBBIhMUETIjNRgWFxFP/aAAwDAQACEQMRAD8AgIAPabgAAAcHIAABwAAAAAAAAAAAAAAAAAAAAAAAAAAdAAAAAAAAAAAAAAAAAAAAAAAAADhsDkHByAAAAAAAAAAAAA68S86+kDsDhNHIAAAAAAAAAAAAAAAAAAAAAAAAAAAD64eLZdZCqmDttslw11x04pPTXRa+Cb9h8i49zHR6MMeefYk7L3KFDaWtdcJOMmvM5ST9kUV5cnZXaF7dsbdui+6nHrjGzPbybGk+pi5QprenNNxes349ngTLH6L7OrWkMHGiv8Ctv6WjMHi2htfGx9PdF9VHF8XrLIwb9CbPNtkvefMs02mWLz+hGy701PBpi38qqPUz/ahoyrOnG7m3CjLIxpSyMZauyLX9LQte16fHj49q7/OXhRfCyKnXKNkJLWMotSi1501yZ2lFNNNap8mnzT8DtM1qS7W8w1ROSRdP9gxwM+2mtaUzjG+hf2Yy11h7JKSXgkR09StotG4aoncbAAddAABw2WL0K3Y2ZMIZGbKWPTLSUKIrS22PdKT+Qn5tNfQYndfsCObnx6xa1YsVkTjy0nJSSrg/BvV/qmwCMnUZ5rPbVTkvrxDAYPQrZdKXBg0Nr5VkOtl+1PVmQ948P5pj/wCRV+B79RxGGbTPyo3Knd9uFTTLZ3U1V08SyuLq64w4tHTprouemr+krMtTfu/hbM9GX9tBVZ6fT/jhpx8QAFywAAAAAAAAAAAAAAAAAAAAAAAANi93WnvTs/T+4Wvp4nr+/U10Ld3N9J4Or3vtkoWVylLF1fO2MnKc4Lxi9X6H4GbqqzNNwqyxuFos1z3gbPy6toZU8qMm7bpSqucX1dkH/VxjLTT4MdFp3aM2MPjmYdV0JV3VwurktJQnFSi/SmY8WX6c70ppbtlRm7XplXs15EMjrZUWqMoRripcNib1eja01T5/oonX+1zZv93lf5UP5z4dId02La3PDseFLm+radtLfob1j7Hp4FWdIejmXgT4MqpwUm1XampVWaf2ZLw56PR+BpiuLLO/lbql52z+8vpTibSlizx4WwlTG2FjthGOqk4OOmkn2aS+khPEvOjJdHIKWbhRklKMsvHjKLWqadsU013o2O94sL5pjfV6vwJ3yRhiKxDs2inhrApIF3b2dl41Wyrp1Y9NU1bjpShVCElrdFNapFIluLJ9Su0q27o2cS85xxLzovzdzsnFs2VhTsxqLJyhPinOmuUn/Sz7W1zJJ7xYXzTG+r1fgUW6qInWkJy6n0r7cXjJU51vypXVVN+EIOS/fYy0iuNya/3bP9dl93Ascy553klVk5Kb31bYuWVTixtlXUqI3ThGXCpylOa1lp2pKPZ2cysdI+H7jafK2Zj2y4rcem2WnDxWVQnLTzatdnNnx94sL5njfV6vwLsfURSsRpOuSIjWmr60XmQ4l50XDu42dj2Z+3o2UVWRryoquM6oSUF1uQtIprkuS+hE/wDeLD+Z431er8C2/VRWdaSnLqfTWBMaky3tY1dW1HCquFUfc1L4YRUI6tz1ei7zDdDa4z2lgRnFTjLJrUoyScWtexp9qL4vuncs342w3EvOvpCaNn/eLC+aY31er8CDb4dmY9Wzq5VUU1S91Vx4q6oQenBZy1S8EUU6qLWiNK4y7nWlNAA1LgAAAAAAAAAAAAAAAAAADmuyUWpRlKEovWMotxlF9zTXNM4LE6P7rXmYmPkrOVXX1qzq/c3Hw693F1i1+ghe9aR9yM2iPb19Et604KNW0YuyKjosqtN2cl/zIfK9K5+DLU2ZtOjJrVuPbG6uXZKD19jXan4Mq97mZ/8AUY/U3/7StMHMvxrespsnj3QejlB8Mk0/iyXY1r3PVGWcWPL5pKqaVtxbTHk2ps6nJqnTfXG2ua0lGS19DXma7mQLdp0+uzLniZajK3gc6boRUONR+NGcVyT7GmtF28vPZBlvSaW1KmYmste7tgS2ftrFxpS6yKy8Wymx6JzrldHhbXn1Uk/GJsIV7vNxo+69hW6fDWfXVr54uyEtPY4/vZYRZmv3xWZTvO4iUK3xeSLv8bG+/iUKX1vi8kXf42N9/EoU1dJw/q3FxbD7sfJGD+hZ99MlBF92PkjB/Qs++mSgwZOc/wDVFvcq53Kfk2f69L7uBY5XG5T8mz/XpfdwLHJ5ucu35PJk7Sx6pcNt9VUtNeGdsIPTz6N9nI+Xv3h/O8f/AD6/xKb31Je+cPU6vvLSB8K8yLqdLFqxO064txva6N101LaHSCUWpRlkwcZJ6pp25OjT70WQVLuH7dpejE/85bRVnjV5hDJyUNvk8rS9Vo+2wwfQjyns/wBaq+0zm+Tys/VaPtsMH0I8p7P9aq+03V/D/F8cP42UIBvq8m1+t1fwWE/IBvq8m1+t1fwWHn4ecM9OUKQAB6zYAAAAAAAAAAAAAAAAAAAXtuf2rG7Zsadf6TElKqa/NlKU636NHp+qyiTOdDuktuzclXQTnXLSGRVrp1kPD85atr/6U58ffTUIXr3Q2SK86VbrKsu+eRj3+45WPitrdXWVSl3zSUouLfa+7X0kz2FtrHzaVdjWKyD5NdkoPvjOL5pmQPOra1J8eGaJmsob0H6AVbNnO6Vvuq+UeBT6vq41x+UoR1b1fLVt93cTIEX6a9M8fZ1bT0tyZR1px03z7uKbXxY/b3D7slv3J5tKFb3NvqO0MCqPNYM4ZdunP4TnGSj6VGGv65bOPdGyEZwkpwnFThJc1KLWqa9hq3m5dl1tl1snZZbJzsm+1t/9uxJdySLR3VdN4RhXs/KkoOL4MO166ST4n1U32R07Ivsa0XauerNgmKRr4W3p9saWN0i2NVnYt2NbqoWpfCj8aMoyUozXimkyr69zmRxpSzqur15yjTLja79IuWiftZcOoM1Mt6RqJVVvMenk2Rs6vFopx6k1XTBQhq9W9O9vvb7faes5OCuZ2irncp+TZ/r0vu4FjlcblPybP9el93AsYtzc5TvyUbvp8pw9Tq+8tIGTzfT5Th6nV95aQM9HD+OGinGFjbkdoQry8qiT0eTTB1r+06nNtLx4Zt/qsuk1Y2bnWY91V9L4bKZqyDfNarufg02n4NmxHRHpTj7RpVlT4bIqKvpfxq5ac/THzSMnVY57u5Vlr52w3T7oCtpTrvquWPfCHVycoOcLIptxT0fwWm3z8TH9Dd2PuTJrysm+N0qXxVV1xcYKWjXHKT5vTXktFzLHBRGa8V7d+FffOtBAN9Xk2v1ur+CwsAr/AH1eTa/W6v4LBh5wU5QpAAHrNgAAAAAAAAAAAAAAAAAAAAA+2FmW0WK2iydNi7J1ycZeh6dq8OwlWNvN2vBJO+u3xsor1/0cJDwRtStvcIzWJ9pXn7xtrXRcXkqlNNPqaoQbX6TTkvY0RSTbbk25Sk9ZSk25SfnbfNvxAFaRX1DsREenaquUpRhFcUpyjCK5c23ol9LM9LoLtbv2fa/1qf5zAQm4tSi9JRalF+Zp6p/SbM9GNsRzcSjJjouth8OKevBNcpw9kk0VZ8tsephDJea+lPYmT0k2ZRKXBfXjVLWSuVN1cFrp3tyS7OSeiPNkbztrTi0rq6tflV0QUv8AVxF+XVRnGUZJSjJOMotaqSa0aa70Q1brdk9Zx9TZw669V19nV/brp4a6Geuak+b1VxevzDK9Aciy3ZmFZdKVlllbnKc3rKWs5NN+zQz50ppjCMYQioQglGEYpKMUlokkuxGL6WbZjhYeRkS7YR4a13ynL4MIr2tfvM0/dbx8qvctcfdlsJWKu62pOcm1XbZWm9e1qLWpz755PzrJ+s3fzHjgtEl26LTU7Hr6hs073XTm9bLJ2y004rJyslp5tZNvQ6AHXXv2TsXKy3OOLRLIdai5qDgnFS10fwmvM/oMrj9DdtVTjZVhZFVkecZwsrjJehqZ691u21ibRrjNqNWUvc9jb0UX21y/a0j+uX+ZM2e1La14U3vNZ0o3M6bdIMFxry9ISlHih7ooqcpLXTVOtpP7Tv0d6bbTzNpYNVuQ+rnkR4qqoQrjJJOT1aXE1y101LZ6Q9G8TPrjXlV9YoNyrkpShODfa4yT9HLs5Hh6O9Btn4NnW0VOVujSttm7JRT5Ph15R1T01S1Kvq4+3j5Q7669eUlK/wB9b/4bX63V/BYT8qXfftiMnjYUXrKDeTd+brFxrj6XrN+xecqwRvJCOON2hVYAPVawAAAAAAAAAAAAAAAAAAAAAAAAAACT9BOmFmzbXqnbjWuPX1fKWnLrK+eil9qXtIwDlqxaNS5MRMals5sLb+Lm1qzGujau+PxZxfmlB80zJGqMW01JNxkuySekl6Guw9b2rl6cLy8lrze6btP4jHPR/qVM4f8AWyG3OkGLhVuzJujUu6PxrJeEYLmyjOnfTG3aVqSTqxqm+pq15yf97Z3cWnd3avzkXfNuT5yfbJ82/S+8F2Lp60nfuU644r5AAXrAAAcNFt9At5dahDG2jPglBRhVktNxmktErX3S/O7H36d9SghkxxeNSjasWjy2sqtjJKUJKcXzUotNP0NHbU1Wxsm2r+qtsp56vqrJ16/stHbIzr7E1bfdcn2xsussT9kmzJ/45/an6P8Aq8+mG8TFwozrplHKytPg1RbdcHr22TXJac/g9vo7SjM7Mtvtsuum7LbJcU5vtb/BLRJdySPOkcmnFhrj9La0ioAC1MAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH//Z'
+            },
+            {
+                title: 'E!',
+                url: `https://h1.ustvgo.la/E/myStream/playlist.m3u8?wmsAuthSign=${ustvgotoken}`,
+                img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLyHBsg8PKiP79KNaKEXLtsM4bSTuExNKiCUpoF48gHqeFjGmgA4oYlcKAuTWwvbhLD0Q&usqp=CAU'
+            },
+            {
+                title: 'We TV',
+                url: `https://h1.ustvgo.la/WETV/myStream/playlist.m3u8?wmsAuthSign=${ustvgotoken}`,
+                img: 'https://www.logolynx.com/images/logolynx/s_9f/9f2b497b54649a9931790745f4c92f20.png'
+            },
+            {
+                title: 'VH1',
+                url: `https://h1.ustvgo.la/VH1/myStream/playlist.m3u8?wmsAuthSign=${ustvgotoken}`,
+                img: 'http://123tv.live/wp-content/uploads/2018/08/vh1-269x151.png'
+            },
+            {
+                title: 'MTV',
+                url: `https://h1.ustvgo.la/MTV/myStream/playlist.m3u8?wmsAuthSign=${ustvgotoken}`,
+                img: 'http://123tv.live/wp-content/uploads/2018/08/mtv-269x151.png'
+            },
+            {
+                title: 'Comedy Central',
+                url: `https://h1.ustvgo.la/Comedy/myStream/playlist.m3u8?wmsAuthSign=${ustvgotoken}`,
+                img: 'http://123tv.live/wp-content/uploads/2018/08/mtv-269x151.png'
+            },
+
+
+        ],
+        Kids: [
+            {
+                title: 'Cartoon Network',
+                url: `https://h1.ustvgo.la/CN/myStream/playlist.m3u8?wmsAuthSign=${ustvgotoken}`,
+                img: 'http://123tv.live/wp-content/uploads/2018/08/cartoon-network-269x151.png'
+            }
+        ],
+        CR: [
+            {
+                title: 'Ticavision',
+                url: `http://k3.usastreams.com:1935/HBTV/HBTV/playlist.m3u8`,
+                img: 'https://i.ytimg.com/vi/HhiqLv4tZWs/mqdefault.jpg'
+            },
+            {
+                title: 'Repretel 6',
+                url: `https://cr-repretel-canal6-live.ned.media/repretel/canal6/smil:live.smil/playlist.m3u8?iut=eyJwYXJhbXMiOnsiZXhwIjoxNjIxNDQwMDc0LCJzZXNzaW9uIjoiMTg2LjI2LjExOC4xOTEiLCJ3aGl0ZWxpc3QiOlsiMTg2LjI2LjExOC4xOTEiXX0sInNpZ25hdHVyZSI6ImY0YjMxYzA2ZjkwNjNlMzFjNDg5Njk0NzI1NmQwNzYwNzlmNjZhNWYifQ==`,
+                img: 'https://www.repretel.com/wp-content/themes/albavision-theme/img/logo_grupo.png'
+            },
+            // {
+            //     title: 'Teletica 7',
+            //     url: `https://stream-03.sv4.dailymotion.com/sec(jlR0lJnpjfic8bXdlVDO57DUygIgFn17SkQS4gq-SKY)/dm/3/x29e3wg/s/live-3.m3u8`,
+            //     img: 'https://static3.teletica.com//Files/Sizes/2021/2/4/canales_1764889021_380x260.png'
+            // },
+        ],
+        Documentary: [
+            {
+                title: 'Animal Planet',
+                url: `https://h1.ustvgo.la/Animal/myStream/playlist.m3u8?wmsAuthSign=${ustvgotoken}`,
+                img: 'http://123tv.live/wp-content/uploads/2018/08/animal-planet-269x151.png'
+            },
+            {
+                title: 'NatGEOWild',
+                url: `https://h1.ustvgo.la/NatGEOWild/myStream/playlist.m3u8?wmsAuthSign=${ustvgotoken}`,
+                img: 'http://123tv.live/wp-content/uploads/2018/08/National-Geographic-269x151.png'
+            },
+            {
+                title: 'Science',
+                url: `https://h1.ustvgo.la/Science/myStream/playlist.m3u8?wmsAuthSign=${ustvgotoken}`,
+                img: 'http://123tv.live/wp-content/uploads/2018/08/sci-269x151.png'
+            },
+            {
+                title: 'Docurama',
+                url: `https://cinedigm.vo.llnwd.net/conssui/amagi_hls_data_xumo1234A-docuramaA/CDN/master.m3u8`,
+                img: 'https://camo.githubusercontent.com/fcb4817f613b346faf9e4b84379264af8dbc9511cb1ffa53ce76930fc08c7185/68747470733a2f2f692e696d6775722e636f6d2f624e67386d7a652e706e67'
+            },
+            {
+                title: 'NASA TV',
+                url: `http://iphone-streaming.ustream.tv/uhls/6540154/streams/live/iphone/playlist.m3u8`,
+                img: 'https://camo.githubusercontent.com/bd692a1770908ca326047f694b41c7abee5c6a1fd62de83215c279a37e635c6e/68747470733a2f2f692e696d6775722e636f6d2f726d79666f4f492e706e67'
+            },,
+            {
+                title: 'Unsolved Mysteries',
+                url: `https://dai.google.com/linear/hls/event/iLjE1UKtRCiSNkFatA65bg/master.m3u8`,
+                img: 'https://komonews.com/resources/media2/3x1/full/119/center/90/5cf60259-ce44-452f-a8a1-cb33585ea701-small3x1_stirr_1219_epg_unsolvedmysteries_1920x1080.png?cb=c81e728d9d4c2f636f067f89cc14862c'
+            },
+        ],
+
+        // PlutoTV: [
+        //     {
+        //         title: 'Nick Pluto TV',
+        //         url: 'https://service-stitcher.clusters.pluto.tv/v1/stitch/embed/hls/channel/5ca673e0d0bd6c2689c94ce3/master.m3u8?deviceId=channel&deviceModel=web&deviceVersion=1.0&appVersion=1.0&deviceType=rokuChannel&deviceMake=rokuChannel&deviceDNT=1&advertisingId=channel&embedPartner=rokuChannel&appName=rokuchannel&is_lat=1&bmodel=bm1&content=channel&platform=web&tags=ROKU_CONTENT_TAGS&coppa=false&content_type=livefeed&rdid=channel&genre=ROKU_ADS_CONTENT_GENRE&content_rating=ROKU_ADS_CONTENT_RATING&studio_id=viacom&channel_id=channel',
+        //         img: 'http://images.pluto.tv/channels/5ca673e0d0bd6c2689c94ce3/colorLogoPNG.png'
+        //     },
+        //     {
+        //         title: 'Reality TV Pluto TV',
+        //         url: 'https://service-stitcher.clusters.pluto.tv/v1/stitch/embed/hls/channel/5e82530945600e0007ca076c/master.m3u8?deviceId=channel&deviceModel=web&deviceVersion=1.0&appVersion=1.0&deviceType=rokuChannel&deviceMake=rokuChannel&deviceDNT=1&advertisingId=channel&embedPartner=rokuChannel&appName=rokuchannel&is_lat=1&bmodel=bm1&content=channel&platform=web&tags=ROKU_CONTENT_TAGS&coppa=false&content_type=livefeed&rdid=channel&genre=ROKU_ADS_CONTENT_GENRE&content_rating=ROKU_ADS_CONTENT_RATING&studio_id=viacom&channel_id=channel',
+        //         img: 'http://images.pluto.tv/channels/5e82530945600e0007ca076c/colorLogoPNG.png'
+        //     },
+        //     {
+        //         title: 'Pluto TV Animals',
+        //         url: 'https://service-stitcher.clusters.pluto.tv/v1/stitch/embed/hls/channel/56b27f85ff3037045055037e/master.m3u8?deviceId=channel&deviceModel=web&deviceVersion=1.0&appVersion=1.0&deviceType=rokuChannel&deviceMake=rokuChannel&deviceDNT=1&advertisingId=channel&embedPartner=rokuChannel&appName=rokuchannel&is_lat=1&bmodel=bm1&content=channel&platform=web&tags=ROKU_CONTENT_TAGS&coppa=false&content_type=livefeed&rdid=channel&genre=ROKU_ADS_CONTENT_GENRE&content_rating=ROKU_ADS_CONTENT_RATING&studio_id=viacom&channel_id=channel',
+        //         img: 'http://images.pluto.tv/channels/56b27f85ff3037045055037e/colorLogoPNG.png'
+        //     },
+        //     {
+        //         title: 'Pluto TV Ghost Hunters',
+        //         url: 'https://service-stitcher.clusters.pluto.tv/v1/stitch/embed/hls/channel/5f27bbe4779de70007a6d1c1/master.m3u8?deviceId=channel&deviceModel=web&deviceVersion=1.0&appVersion=1.0&deviceType=rokuChannel&deviceMake=rokuChannel&deviceDNT=1&advertisingId=channel&embedPartner=rokuChannel&appName=rokuchannel&is_lat=1&bmodel=bm1&content=channel&platform=web&tags=ROKU_CONTENT_TAGS&coppa=false&content_type=livefeed&rdid=channel&genre=ROKU_ADS_CONTENT_GENRE&content_rating=ROKU_ADS_CONTENT_RATING&studio_id=viacom&channel_id=channel',
+        //         img: 'https://images.pluto.tv/channels/5f27bbe4779de70007a6d1c1/colorLogoPNG.png'
+        //     },
+        //     {
+        //         title: 'Pluto TV Documentaries',
+        //         url: 'https://service-stitcher.clusters.pluto.tv/v1/stitch/embed/hls/channel/5b85a7582921777994caea63/master.m3u8?deviceId=channel&deviceModel=web&deviceVersion=1.0&appVersion=1.0&deviceType=rokuChannel&deviceMake=rokuChannel&deviceDNT=1&advertisingId=channel&embedPartner=rokuChannel&appName=rokuchannel&is_lat=1&bmodel=bm1&content=channel&platform=web&tags=ROKU_CONTENT_TAGS&coppa=false&content_type=livefeed&rdid=channel&genre=ROKU_ADS_CONTENT_GENRE&content_rating=ROKU_ADS_CONTENT_RATING&studio_id=viacom&channel_id=channel',
+        //         img: 'http://images.pluto.tv/channels/5b85a7582921777994caea63/colorLogoPNG.png'
+        //     },
+        //     {
+        //         title: 'Pluto TV BobEsponja',
+        //         url: 'https://service-stitcher.clusters.pluto.tv/v1/stitch/embed/hls/channel/5f1aca0b4e448e00075e7c5e/master.m3u8?deviceId=channel&deviceModel=web&deviceVersion=1.0&appVersion=1.0&deviceType=rokuChannel&deviceMake=rokuChannel&deviceDNT=1&advertisingId=channel&embedPartner=rokuChannel&appName=rokuchannel&is_lat=1&bmodel=bm1&content=channel&platform=web&tags=ROKU_CONTENT_TAGS&coppa=false&content_type=livefeed&rdid=channel&content_rating=ROKU_ADS_CONTENT_RATING',
+        //         img: 'https://images.pluto.tv/channels/5f1aca0b4e448e00075e7c5e/colorLogoPNG.png'
+        //     },
+        //     {
+        //         title: 'Pluto TV BBCHome',
+        //         url: 'https://service-stitcher.clusters.pluto.tv/v1/stitch/embed/hls/channel/5fb5836fe745b600070fc743/master.m3u8?deviceId=channel&deviceModel=web&deviceVersion=1.0&appVersion=1.0&deviceType=rokuChannel&deviceMake=rokuChannel&deviceDNT=1&advertisingId=channel&embedPartner=rokuChannel&appName=rokuchannel&is_lat=1&bmodel=bm1&content=channel&platform=web&tags=ROKU_CONTENT_TAGS&coppa=false&content_type=livefeed&rdid=channel&genre=ROKU_ADS_CONTENT_GENRE&content_rating=ROKU_ADS_CONTENT_RATING&studio_id=viacom&channel_id=channel',
+        //         img: 'http://images.pluto.tv/channels/5fb5836fe745b600070fc743/colorLogoPNG.png'
+        //     },
+        //     {
+        //         title: 'Pluto TV BBCFood',
+        //         url: 'https://service-stitcher.clusters.pluto.tv/v1/stitch/embed/hls/channel/5fb5844bf5514d0007945bda/master.m3u8?deviceId=channel&deviceModel=web&deviceVersion=1.0&appVersion=1.0&deviceType=rokuChannel&deviceMake=rokuChannel&deviceDNT=1&advertisingId=channel&embedPartner=rokuChannel&appName=rokuchannel&is_lat=1&bmodel=bm1&content=channel&platform=web&tags=ROKU_CONTENT_TAGS&coppa=false&content_type=livefeed&rdid=channel&genre=ROKU_ADS_CONTENT_GENRE&content_rating=ROKU_ADS_CONTENT_RATING&studio_id=viacom&channel_id=channel',
+        //         img: 'http://images.pluto.tv/channels/5fb5844bf5514d0007945bda/colorLogoPNG.png'
+        //     },
+        //     {
+        //         title: 'Pluto TV Auction Kings',
+        //         url: 'https://service-stitcher.clusters.pluto.tv/v1/stitch/embed/hls/channel/5e4bba36e4644300098cd0bb/master.m3u8?deviceId=channel&deviceModel=web&deviceVersion=1.0&appVersion=1.0&deviceType=rokuChannel&deviceMake=rokuChannel&deviceDNT=1&advertisingId=channel&embedPartner=rokuChannel&appName=rokuchannel&is_lat=1&bmodel=bm1&content=channel&platform=web&tags=ROKU_CONTENT_TAGS&coppa=false&content_type=livefeed&rdid=channel&genre=ROKU_ADS_CONTENT_GENRE&content_rating=ROKU_ADS_CONTENT_RATING&studio_id=viacom&channel_id=channel',
+        //         img: 'https://images.pluto.tv/channels/5e4bba36e4644300098cd0bb/colorLogoPNG.png'
+        //     },
+        //     {
+        //         title: 'Pluto TV Auction Hunters',
+        //         url: 'https://service-stitcher.clusters.pluto.tv/v1/stitch/embed/hls/channel/5ede45d077746000072be0fe/master.m3u8?deviceId=channel&deviceModel=web&deviceVersion=1.0&appVersion=1.0&deviceType=rokuChannel&deviceMake=rokuChannel&deviceDNT=1&advertisingId=channel&embedPartner=rokuChannel&appName=rokuchannel&is_lat=1&bmodel=bm1&content=channel&platform=web&tags=ROKU_CONTENT_TAGS&coppa=false&content_type=livefeed&rdid=channel&genre=ROKU_ADS_CONTENT_GENRE&content_rating=ROKU_ADS_CONTENT_RATING&studio_id=viacom&channel_id=channel',
+        //         img: 'https://images.pluto.tv/channels/5ede45d077746000072be0fe/colorLogoPNG.png'
+        //     }
+        // ]
+
+    }
+
+    var ENTER_KEY = '13'
+    var LEFT_KEY = '37'
+    var UP_KEY = '38'
+    var RIGHT_KEY = '39'
+    var DOWN_KEY = '40'
+
+    var player = {}
+
+    function playM3u8(url) {
+        player = new Clappr.Player({
+            source: url,
+            parentId: '#player-wrapper',
+            preload: 'auto',
+            autoPlay: 'true',
+            width: '100%',
+            height: '100%',
+            fullscreenEnabled: 'true',
+            hideMediaControl: 'false',
+            mediacontrol: {seekbar: "#4B64F0", buttons: "#FFFFFF"},
+
+        });
+        // document.title = "Playing: " + url;
+        // player.play()
+    }
+
+    const TvVueApp = {
+        data() {
+            return {
+                rawShows: rawShows,
+                shows: [],
+                activeShow: '',
+                visible: true
+            }
+        },
+        beforeMount() {
+            var self = this
+
+            _.forEach(this.rawShows, function (shows, showType) {
+                _.forEach(shows, function (show, index) {
+                    var _show = show
+                    _show['type'] = showType
+                    self.shows.push(_show)
+                })
+            })
+            this.activeShow = 0
+
+            var selectedChannel = window.location.href.split("v=")[1];
+            if (selectedChannel)
+                this.activeShow = parseInt(selectedChannel)
+            this.activeShow = this.activeShow < 0 || this.activeShow > this.shows.length - 1 ? 0 : this.activeShow
+
+            playM3u8(this.shows[this.activeShow].url)
+        },
+        methods: {
+            activeChannel(showIndex) {
+                return showIndex == this.activeShow
+            },
+            handleGlobalKeyDown(e) {
+                // alert('1')
+                if (e.keyCode == UP_KEY || e.keyCode == '413' || e.keyCode == DOWN_KEY || e.keyCode == '413') {
+                    // down
+                    this.visible = !this.visible
+                } else if (e.keyCode == LEFT_KEY || e.keyCode == '412') {
+                    // left
+                    this.visible = true
+                    this.activeShow = this.activeShow == 0 ? this.shows.length - 1 : this.activeShow - 1
+                } else if (e.keyCode == RIGHT_KEY || e.keyCode == '417') {
+                    // right arrow
+                    this.visible = true
+                    this.activeShow = this.activeShow == this.shows.length - 1 ? 0 : this.activeShow + 1
+                } else if (e.keyCode == ENTER_KEY || e.keyCode == '415') {
+                    // enter key
+                    // window.location = '?v=' + this.activeShow
+                    player.configure({
+                      source: this.shows[this.activeShow].url,
+                    })
+                    this.visible = false
+                }
+            }
+        }
+    }
+
+    var app = Vue.createApp(TvVueApp).mount('#app');
+
+    window.addEventListener('keydown', function (e) {
+        app.handleGlobalKeyDown(e)
+    });
+
+    var hammertime = new Hammer(document.getElementById('player-wrapper'));
+    hammertime.get('swipe').set({ direction: Hammer.DIRECTION_ALL });
+    hammertime.on('tap', function(ev) {
+        app.handleGlobalKeyDown({keyCode: ENTER_KEY})
+    });
+    hammertime.on('swipeup', function(ev) {
+        app.handleGlobalKeyDown({keyCode: UP_KEY})
+    });
+    hammertime.on('swiperight', function(ev) {
+        app.handleGlobalKeyDown({keyCode: LEFT_KEY})
+    });
+    hammertime.on('swipeleft', function(ev) {
+        app.handleGlobalKeyDown({keyCode: RIGHT_KEY})
+    });
+
+
+</script>
+
+</body>
+</html>
