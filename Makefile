@@ -9,4 +9,6 @@ local:
 s3updatetoken:
 	node run-cypress.js
 	aws s3 cp ustvgotoken.js s3://tv.hugoalvarado.net/ --profile hugo102
+	aws s3 cp web/index.html s3://tv.hugoalvarado.net/ --profile hugo102
+	aws s3 cp web/player.css s3://tv.hugoalvarado.net/ --profile hugo102
 
