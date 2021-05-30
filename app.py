@@ -9,10 +9,11 @@ from aws_cdk import core as cdk
 from aws_cdk import core
 
 from hiptv_pipeline.hiptv_stack import HiptvStack
-# from hiptv_pipeline.hiptv_pipeline_stack import HiptvPipelineStack
+from hiptv_pipeline.hiptv_pipeline_stack import HiptvPipelineStack
 
 
 app = core.App()
-HiptvStack(app, "hiptv-stack")
+# HiptvStack(app, "hiptv-stack")
+HiptvPipelineStack(app, "hiptv-pipeline")
 
 app.synth()
