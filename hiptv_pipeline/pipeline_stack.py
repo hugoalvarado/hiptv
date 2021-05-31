@@ -7,7 +7,7 @@ from aws_cdk import (
 from aws_cdk.pipelines import CdkPipeline, SimpleSynthAction
 
 
-class HiptvPipelineStack(core.Stack):
+class PipelineStack(core.Stack):
 
     def __init__(self, scope: core.Construct, id: str, *, repo_name: str = None,
                  lambda_code: lambda_.CfnParametersCode = None, **kwargs) -> None:
@@ -38,17 +38,15 @@ class HiptvPipelineStack(core.Stack):
                 branch=gh_branch
             ),
 
-            synth_action=SimpleSynthAction.standard_npm_synth(
+            synth_action=SimpleSynthAction(
                 source_artifact=source_artifact,
                 cloud_assembly_artifact=cloud_assembly_artifact,
-
                 # Optionally specify a VPC in which the action runs
                 # vpc=ec2.Vpc(self, "NpmSynthVpc"),
-
                 install_command='npm install -g aws-cdk && pip install -r requirements.txt',
                 # Use this if you need a build step (if you're not using ts-node
                 # or if you have TypeScript Lambdas that need to be compiled).
-                build_command="npm install cypress && node run-cypress.js",
+                build_command="",
                 synth_command="cdk synth"
             )
         )

@@ -8,12 +8,12 @@ from aws_cdk import core as cdk
 # being updated to use `cdk`.  You may delete this import if you don't need it.
 from aws_cdk import core
 
-from hiptv_pipeline.hiptv_stack import HiptvStack
-from hiptv_pipeline.hiptv_pipeline_stack import HiptvPipelineStack
+from hiptv_pipeline.app_stack import AppStack
+from hiptv_pipeline.pipeline_stack import PipelineStack
 
 
 app = core.App()
-# HiptvStack(app, "hiptv-stack")
-HiptvPipelineStack(app, "hiptv-pipeline")
+AppStack(app, "app-stack")
+PipelineStack(app, "pipeline-stack")
 
 app.synth()

@@ -54,9 +54,14 @@ aws-cdk.lambda-layer-awscli==1.106.1
 aws-cdk.pipelines==1.105.0
 aws-cdk.region-info==1.106.1
 cattrs==1.5.0
+certifi==2021.5.30
+chardet==4.0.0
 constructs==3.3.75
+idna==2.10
 jsii==1.29.0
 publication==0.0.3
 python-dateutil==2.8.1
+requests==2.25.1
 six==1.16.0
 typing-extensions==3.10.0.0
+urllib3==1.26.5
