@@ -25,7 +25,7 @@ class PipelineStack(core.Stack):
             "Pipeline",
             cross_account_keys=False,
             # important: https://docs.aws.amazon.com/cdk/api/latest/python/aws_cdk.pipelines/README.html#a-note-on-cost
-            pipeline_name="MyTestPipeline",
+            pipeline_name="HipTvPipeline",
             cloud_assembly_artifact=cloud_assembly_artifact,
 
             source_action=codepipeline_actions.GitHubSourceAction(
