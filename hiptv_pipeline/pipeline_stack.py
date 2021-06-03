@@ -7,6 +7,8 @@ from aws_cdk import (
 from aws_cdk.pipelines import CdkPipeline, SimpleSynthAction
 
 
+from .app_stage import AppStage
+
 class PipelineStack(core.Stack):
 
     def __init__(self, scope: core.Construct, id: str, *, repo_name: str = None,
@@ -50,3 +52,5 @@ class PipelineStack(core.Stack):
                 synth_command="cdk synth"
             )
         )
+
+        pipeline.add_application_stage(AppStage(self, 'QA'))

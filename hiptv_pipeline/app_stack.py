@@ -51,7 +51,7 @@ class AppStack(core.Stack):
         )
         rule.add_target(targets.LambdaFunction(lambdaFn))
 
-        bucket_name = core.CfnOutput(
+        self.bucket_name = core.CfnOutput(
             self, "BucketURL",
             description="The message that came back from the Custom Resource",
             value=bucket.bucket_website_domain_name
