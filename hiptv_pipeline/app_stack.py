@@ -34,34 +34,34 @@ class AppStack(core.Stack):
             retain_on_delete=False
         )
 
-        # lambda function used to retrieve token for streams
-        with open("./token_lambda/lambda-handler.py", encoding="utf8") as fp:
-            handler_code = fp.read()
+            # # lambda function used to retrieve token for streams
+            # with open("./token_lambda/lambda-handler.py", encoding="utf8") as fp:
+            #     handler_code = fp.read()
+            #
+            # lambdaFn = lambda_.Function(
+            #     self,
+            #     "TokenLambda",
+            #     code=lambda_.InlineCode(handler_code),
+            #     handler="index.main",
+            #     timeout=core.Duration.seconds(300),
+            #     runtime=lambda_.Runtime.PYTHON_3_7,
+            # )
+            #
+            # bucket.grant_put(lambdaFn)
+            # bucket.grant_read(lambdaFn)
 
-        lambdaFn = lambda_.Function(
-            self,
-            "TokenLambda",
-            code=lambda_.InlineCode(handler_code),
-            handler="index.main",
-            timeout=core.Duration.seconds(300),
-            runtime=lambda_.Runtime.PYTHON_3_7,
-        )
-
-        bucket.grant_put(lambdaFn)
-        bucket.grant_read(lambdaFn)
-
-        # Run every day at 6PM UTC
-        # See https://docs.aws.amazon.com/lambda/latest/dg/tutorial-scheduled-events-schedule-expressions.html
-        rule = events.Rule(
-            self, "Rule",
-            schedule=events.Schedule.cron(
-                minute='0',
-                hour='18',
-                month='*',
-                week_day='*',
-                year='*'),
-        )
-        rule.add_target(targets.LambdaFunction(lambdaFn))
+        # # Run every day at 6PM UTC
+        # # See https://docs.aws.amazon.com/lambda/latest/dg/tutorial-scheduled-events-schedule-expressions.html
+        # rule = events.Rule(
+        #     self, "Rule",
+        #     schedule=events.Schedule.cron(
+        #         minute='0',
+        #         hour='18',
+        #         month='*',
+        #         week_day='*',
+        #         year='*'),
+        # )
+        # rule.add_target(targets.LambdaFunction(lambdaFn))
 
         self.bucket_name = core.CfnOutput(
             self, "BucketURL",
