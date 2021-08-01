@@ -2,7 +2,8 @@
 local:
 	# python --version
 	# pyenv shell 3.8.6
-	node run-cypress.js
+	# node run-cypress.js
+	python get_token/get_token.py > ustvgotoken.js
 	cp ustvgotoken.js web
 	python -m http.server --directory ./web 88
 
