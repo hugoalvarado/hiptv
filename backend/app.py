@@ -1,7 +1,11 @@
-import json
 from chalice import Chalice
 
 app = Chalice(app_name='hiptv-backend')
+
+
+# sources for channels:
+# http://www.reloltv.com/ Playerjs
+# ustvgo.la ..
 
 all_channels = {
         'news': [
@@ -65,6 +69,11 @@ all_channels = {
             },
         ],
         'reality': [
+            {
+                'title': 'Discovery',
+                'url': 'https://bozztv.com/teleyupp/teleup-discovery/index.m3u8',
+                'img': 'https://discovery-assets-production.s3.eu-west-1.amazonaws.com/app/uploads/2019/03/31153448/facebook.jpg'
+            },
             {
                 'title': 'Red Bull',
                 'url': 'https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master_3360.m3u8',
@@ -236,7 +245,7 @@ all_channels = {
 def index():
     return {'hello':'world'}
 
-@app.route('/channels')
+@app.route('/channels', cors=True)
 def channels():
     return all_channels
 
