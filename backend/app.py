@@ -1,8 +1,9 @@
+import json
 from chalice import Chalice
 
 app = Chalice(app_name='hiptv-backend')
 
-channels = {
+all_channels = {
         'news': [
             {
                 'title': 'CNN',
@@ -231,10 +232,13 @@ channels = {
 
     }
 
-
 @app.route('/')
 def index():
-    return channels
+    return {'hello':'world'}
+
+@app.route('/channels')
+def channels():
+    return all_channels
 
 
 # The view function above will return {"hello": "world"}
