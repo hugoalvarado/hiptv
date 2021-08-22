@@ -18,4 +18,5 @@ jobs:
       - name: Lint with Flake8
         uses: py-actions/flake8@v1
         with:
+          ignore: "E501"
           path: "backend"

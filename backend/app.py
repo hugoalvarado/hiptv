@@ -247,9 +247,11 @@ all_channels = {
 
     }
 
+
 @app.route('/')
 def index():
-    return {'hello':'world'}
+    return {'hello': 'world'}
+
 
 @app.route('/channels', cors=True)
 def channels():
