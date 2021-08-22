@@ -16,4 +16,6 @@ jobs:
         with:
           python-version: "3.8"
       - name: Lint with Flake8
-        run: py-actions/flake8@v1
+        uses: py-actions/flake8@v1
+        with:
+          path: "backend"
