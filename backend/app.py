@@ -6,6 +6,8 @@ app = Chalice(app_name='hiptv-backend')
 # sources for channels:
 # http://www.reloltv.com/ Playerjs
 # ustvgo.la ..
+# http://123tv.live/
+# https://github.com/iptv-restream/iptv-channels
 
 all_channels = {
         'news': [
@@ -91,7 +93,7 @@ all_channels = {
             },
             {
                 'title': 'HGTV',
-                'url': 'https://h1.ustvgo.la/HGTV/myStream/playlist.m3u8?wmsAuthSign=${ustvgotoken}',
+                'url': 'http://50.7.161.82:8278/streams/d/HGTV/playlist.m3u8',
                 'img': 'http://123tv.live/wp-content/uploads/2018/08/HGTV-269x151.png'
             },
             {
@@ -121,7 +123,8 @@ all_channels = {
             },
             {
                 'title': 'TLC',
-                'url': 'https://h1.ustvgo.la/TLC/myStream/playlist.m3u8?wmsAuthSign=${ustvgotoken}',
+                'url': 'http://xxxxlocal.com:8080/xiptv0985/ptXv7hZ0xy/11561',
+                #'url': 'https://h1.ustvgo.la/TLC/myStream/playlist.m3u8?wmsAuthSign=${ustvgotoken}',
                 'img': 'http://123tv.live/wp-content/uploads/2018/08/tlc-269x151.png'
             },
             {
@@ -183,9 +186,7 @@ all_channels = {
                 'title': 'Comedy Central',
                 'url': 'https://h2.ustvgo.la/Comedy/myStream/playlist.m3u8?wmsAuthSign=${ustvgotoken}',
                 'img': 'data:image/png;base64,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'
-            },
-
-
+            }
         ],
         'kids': [
             {
@@ -216,6 +217,11 @@ all_channels = {
                 'title': 'NatGEOWild',
                 'url': 'https://h1.ustvgo.la/NatGEOWild/myStream/playlist.m3u8?wmsAuthSign=${ustvgotoken}',
                 'img': 'http://123tv.live/wp-content/uploads/2018/08/National-Geographic-269x151.png'
+            },
+            {
+                'title': 'GEM Nature',
+                'url': 'https://d2e40kvaojifd6.cloudfront.net/stream/gem_nature/playlist.m3u8',
+                'img': 'https://live-tv-channels.org/pt-data/uploads/logo/ae-gem-nature-1212.jpg'
             },
             {
                 'title': 'Science',
