@@ -30,7 +30,7 @@
         <div v-show="activeChannel(index)" v-for="(show,index) in shows">
             <button tabindex="-1" class="button">
                 <a :href="'?v=' + index">
-                    <img width="269" :src="show.img" :alt="show.title">
+                    <img width="269" :src="show.image" :alt="show.title">
                 </a>
             </button>
         </div>
@@ -83,7 +83,7 @@
         beforeMount() {
             var self = this
 
-            axios.get('https://p0gqtcucn3.execute-api.us-east-1.amazonaws.com/api/channels')
+            axios.get('https://jgvtrv89k9.execute-api.us-east-1.amazonaws.com/api/channels')
                 .then(function (response) {
                     // handle success
                     // console.log(response)
@@ -100,13 +100,10 @@
         methods: {
             setChannels(rawChannels) {
                 var self = this
-
-                _.forEach(rawChannels, function (shows, showType) {
-                    _.forEach(shows, function (show, index) {
-                        var _show = show
-                        _show['type'] = showType
-                        self.shows.push(_show)
-                    })
+                _.forEach(rawChannels, function (show, index) {
+                    var _show = show
+                    _show['type'] = _show['category']
+                    self.shows.push(_show)
                 })
                 this.activeShow = 0
 
