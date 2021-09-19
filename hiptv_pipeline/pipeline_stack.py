@@ -52,7 +52,7 @@ class PipelineStack(core.Stack):
                 # Use this if you need a build step (if you're not using ts-node
                 # or if you have TypeScript Lambdas that need to be compiled).
                 build_command="",
-                synth_command="cdk synth"
+                synth_command="npx cdk synth"
             )
         )
 
