@@ -1,3 +1,4 @@
+# Based on  https://cdkworkshop.com/30-python/70-advanced-topics/200-pipelines/3000-new-pipeline.html
 from aws_cdk import (
     core, aws_codebuild as codebuild,
     aws_codecommit as codecommit,
@@ -51,8 +52,8 @@ class PipelineStack(core.Stack):
                 # Use this if you need a build step (if you're not using ts-node
                 # or if you have TypeScript Lambdas that need to be compiled).
                 build_command="",
-                synth_command="cdk synth app-stack"
+                synth_command="cdk synth"
             )
         )
 
-        # pipeline.add_application_stage(AppStage(self, 'QA'))
+        pipeline.add_application_stage(AppStage(self, 'QA'))
