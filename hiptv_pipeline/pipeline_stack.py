@@ -6,8 +6,8 @@ from aws_cdk import (
     aws_lambda as lambda_)
 from aws_cdk.pipelines import CdkPipeline, SimpleSynthAction
 
-
 from .app_stage import AppStage
+
 
 class PipelineStack(core.Stack):
 
@@ -15,7 +15,9 @@ class PipelineStack(core.Stack):
                  lambda_code: lambda_.CfnParametersCode = None, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
+        # source artifact represents the source code
         source_artifact = codepipeline.Artifact()
+        # cloud assembly artifact represent the result of synthesizing the CDK app
         cloud_assembly_artifact = codepipeline.Artifact("CdkBuildOutput")
 
         gh_owner = "hugoalvarado"
@@ -45,11 +47,11 @@ class PipelineStack(core.Stack):
                 cloud_assembly_artifact=cloud_assembly_artifact,
                 # Optionally specify a VPC in which the action runs
                 # vpc=ec2.Vpc(self, "NpmSynthVpc"),
-                install_command='npm install -g aws-cdk && pip install -r requirements-lambda.txt',
+                install_command='npm install -g aws-cdk && pip install -r requirements-backend.txt',
                 # Use this if you need a build step (if you're not using ts-node
                 # or if you have TypeScript Lambdas that need to be compiled).
                 build_command="",
-                synth_command="cdk synth"
+                synth_command="cdk synth app-stack"
             )
         )
 

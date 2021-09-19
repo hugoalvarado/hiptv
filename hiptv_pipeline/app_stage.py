@@ -6,6 +6,6 @@ class AppStage(core.Stage):
   def __init__(self, scope: core.Construct, id: str, **kwargs):
     super().__init__(scope, id, **kwargs)
 
-    service = AppStack(self, 'TvService')
+    service = AppStack(self, 'HipTvService')
 
     self.bucket_name = service.bucket_name
