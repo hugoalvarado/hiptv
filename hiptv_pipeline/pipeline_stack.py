@@ -56,4 +56,4 @@ class PipelineStack(core.Stack):
             )
         )
 
-        pipeline.add_application_stage(AppStage(self, 'QA'))
+        pipeline.add_application_stage(AppStage(self, 'qa'))
