@@ -1,11 +1,13 @@
+import os
 from aws_cdk import core
 
 from .app_stack import AppStack
 
+
 class AppStage(core.Stage):
-  def __init__(self, scope: core.Construct, id: str, **kwargs):
-    super().__init__(scope, id, **kwargs)
+    def __init__(self, scope: core.Construct, id: str, **kwargs):
+        super().__init__(scope, id, **kwargs)
 
-    service = AppStack(self, 'HipTvService')
+        service = AppStack(self, 'HipTvService' + id, stage=id)
 
-    self.bucket_name = service.bucket_name
+        self.bucket_name = service.bucket_name

@@ -1,3 +1,4 @@
+import os
 from aws_cdk import (core,
                      aws_s3_deployment as s3deploy,
                      aws_events as events,
@@ -7,21 +8,21 @@ from aws_cdk import (core,
 
 
 class AppStack(core.Stack):
-    def __init__(self, app: core.App, id: str, **kwargs):
+    def __init__(self, app: core.App, id: str, stage: str, **kwargs):
         super().__init__(app, id, **kwargs)
 
-        bucket_name_parameter = core.CfnParameter(
+        stage_parameter = core.CfnParameter(
             self,
-            "tv-bucket-name",
-            default="tv.hugoalvarado.net",
+            "DeploymentStage",
+            default=stage,
             type="String",
-            description="The name of the Amazon S3 bucket where uploaded files will be stored.")
+            description="Stage name used to prefix resource naming.")
 
         # main tv static site
         bucket = s3.Bucket(
             self,
             "bucket-tv-web",
-            bucket_name=bucket_name_parameter.value_as_string,
+            bucket_name=stage_parameter.value_as_string + 'tv.hugoalvarado.net',
             public_read_access=True,
             removal_policy=core.RemovalPolicy.DESTROY,
             website_index_document="index.html",
@@ -34,21 +35,21 @@ class AppStack(core.Stack):
             retain_on_delete=False
         )
 
-            # # lambda function used to retrieve token for streams
-            # with open("./token_lambda/lambda-handler.py", encoding="utf8") as fp:
-            #     handler_code = fp.read()
-            #
-            # lambdaFn = lambda_.Function(
-            #     self,
-            #     "TokenLambda",
-            #     code=lambda_.InlineCode(handler_code),
-            #     handler="index.main",
-            #     timeout=core.Duration.seconds(300),
-            #     runtime=lambda_.Runtime.PYTHON_3_7,
-            # )
-            #
-            # bucket.grant_put(lambdaFn)
-            # bucket.grant_read(lambdaFn)
+        # # lambda function used to retrieve token for streams
+        # with open("./token_lambda/lambda-handler.py", encoding="utf8") as fp:
+        #     handler_code = fp.read()
+        #
+        # lambdaFn = lambda_.Function(
+        #     self,
+        #     "TokenLambda",
+        #     code=lambda_.InlineCode(handler_code),
+        #     handler="index.main",
+        #     timeout=core.Duration.seconds(300),
+        #     runtime=lambda_.Runtime.PYTHON_3_7,
+        # )
+        #
+        # bucket.grant_put(lambdaFn)
+        # bucket.grant_read(lambdaFn)
 
         # # Run every day at 6PM UTC
         # # See https://docs.aws.amazon.com/lambda/latest/dg/tutorial-scheduled-events-schedule-expressions.html
