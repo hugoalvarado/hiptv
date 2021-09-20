@@ -11,3 +11,5 @@ aws-cdk.aws_lambda==1.123.0
 aws-cdk.aws_events==1.123.0
 aws-cdk.aws_events_targets==1.123.0
 aws-cdk.aws_s3==1.123.0
+
+-r backend/infrastructure/requirements.txt
