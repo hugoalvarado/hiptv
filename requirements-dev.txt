@@ -1,0 +1,5 @@
+black
+flake8
+
+-r backend/infrastructure/requirements.txt
+-r backend/runtime/requirements.txt

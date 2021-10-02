@@ -3,10 +3,9 @@ import boto3
 from chalice import Chalice
 
 
-app = Chalice(app_name='hiptv')
-dynamodb = boto3.resource('dynamodb')
-dynamodb_table = dynamodb.Table(os.environ.get('APP_TABLE_NAME', ''))
-
+app = Chalice(app_name="hiptv")
+dynamodb = boto3.resource("dynamodb")
+dynamodb_table = dynamodb.Table(os.environ.get("APP_TABLE_NAME", ""))
 
 
 # sources for channels:
@@ -40,16 +39,15 @@ dynamodb_table = dynamodb.Table(os.environ.get('APP_TABLE_NAME', ''))
 
 
 def get_all_channels():
-    response = dynamodb_table.query(
-        KeyConditionExpression=Key('pk').eq('channels')
-    )
-    return response['Items']
+    response = dynamodb_table.query(KeyConditionExpression=Key("pk").eq("channels"))
+    return response["Items"]
 
-@app.route('/')
+
+@app.route("/")
 def index():
-    return {'hello': 'world'}
+    return {"hello": "world"}
 
 
-@app.route('/channels', cors=True)
+@app.route("/channels", cors=True)
 def channels():
     return get_all_channels()
