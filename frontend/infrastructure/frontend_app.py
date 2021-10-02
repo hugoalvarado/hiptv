@@ -7,7 +7,7 @@ from aws_cdk import (core,
                      aws_s3 as s3)
 
 
-class AppStack(core.Stack):
+class FrontEndApp(core.Stack):
     def __init__(self, app: core.App, id: str, stage: str, **kwargs):
         super().__init__(app, id, **kwargs)
 
@@ -30,7 +30,7 @@ class AppStack(core.Stack):
 
         s3deploy.BucketDeployment(
             self, "DeployWebsite",
-            sources=[s3deploy.Source.asset("./web")],
+            sources=[s3deploy.Source.asset("./frontend/web")],
             destination_bucket=bucket,
             retain_on_delete=False
         )
@@ -66,6 +66,6 @@ class AppStack(core.Stack):
 
         self.bucket_name = core.CfnOutput(
             self, "BucketURL",
-            description="The message that came back from the Custom Resource",
+            description="The bucket url for the web files.",
             value=bucket.bucket_website_domain_name
         )
