@@ -2,5 +2,4 @@ black
 flake8
 pytest
 
--r backend/infrastructure/requirements.txt
--r backend/runtime/requirements.txt
+-r requirements-pipeline.txt
