@@ -18,11 +18,15 @@ class FrontEndApp(core.Stack):
             type="String",
             description="Stage name used to prefix resource naming.")
 
+
+        bucket_name = stage_parameter.value_as_string + 'tv.hugoalvarado.net'
+        # bucket = s3.Bucket.from_bucket_name(bucket_name)
+
         # main tv static site
         bucket = s3.Bucket(
             self,
             "bucket-tv-web",
-            bucket_name=stage_parameter.value_as_string + 'tv.hugoalvarado.net',
+            bucket_name=bucket_name,
             public_read_access=True,
             removal_policy=core.RemovalPolicy.DESTROY,
             website_index_document="index.html",
