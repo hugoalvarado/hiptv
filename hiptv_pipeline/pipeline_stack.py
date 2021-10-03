@@ -48,10 +48,10 @@ class PipelineStack(core.Stack):
                 cloud_assembly_artifact=cloud_assembly_artifact,
                 # Optionally specify a VPC in which the action runs
                 # vpc=ec2.Vpc(self, "NpmSynthVpc"),
-                install_command='npm install -g aws-cdk && pip install -r requirements-pipeline.txt',
+                install_command='npm install -g aws-cdk && pip install -r requirements-dev.txt',
                 # Use this if you need a build step (if you're not using ts-node
                 # or if you have TypeScript Lambdas that need to be compiled).
-                build_command="",
+                build_command="py.test -v backend/runtime/tests/",
                 synth_command="npx cdk synth"
             )
         )
