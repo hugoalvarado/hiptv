@@ -1,7 +1,7 @@
 import os
 import boto3
 from chalice import Chalice
-
+from boto3.dynamodb.conditions import Key
 
 app = Chalice(app_name="hiptv")
 dynamodb = boto3.resource("dynamodb")

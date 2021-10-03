@@ -130,6 +130,7 @@ dmypy.json
 
 
 cdk.out/
+chalice.out/
 node_modules/
 m3u/
 .DS_Store
