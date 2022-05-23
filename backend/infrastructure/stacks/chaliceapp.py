@@ -1,6 +1,7 @@
 import os
 
-from aws_cdk import aws_dynamodb as dynamodb, core as cdk
+import aws_cdk as cdk
+from aws_cdk import aws_dynamodb as dynamodb
 from chalice.cdk import Chalice
 
 

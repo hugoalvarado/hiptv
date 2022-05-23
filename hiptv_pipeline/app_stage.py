@@ -1,5 +1,5 @@
 import os, sys
-from aws_cdk import core
+import aws_cdk as cdk
 
 sys.path.append('../backend')
 sys.path.append('../frontend')
@@ -9,8 +9,8 @@ from backend.infrastructure.stacks.chaliceapp import ChaliceApp
 
 
 
-class AppStage(core.Stage):
-    def __init__(self, scope: core.Construct, id: str, **kwargs):
+class AppStage(cdk.Stage):
+    def __init__(self, scope: cdk.Construct, id: str, **kwargs):
         super().__init__(scope, id, **kwargs)
 
         backend_service = ChaliceApp(self, "HipTvBackEnd-" + id.upper())

@@ -56,3 +56,7 @@ command.
  * `cdk docs`        open CDK documentation
 
 Enjoy!
+
+
+nvm install 16.14
+nvm use 16.14.2

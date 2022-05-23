@@ -1,16 +1,6 @@
 requests==2.25.1
 boto3
-aws-cdk.core==1.125.0
-aws-cdk.pipelines==1.125.0
-aws-cdk.aws-s3-deployment==1.125.0
-aws-cdk.aws_codebuild==1.125.0
-aws-cdk.aws_codecommit==1.125.0
-aws-cdk.aws_codepipeline==1.125.0
-aws-cdk.aws_codepipeline_actions==1.125.0
-aws-cdk.aws_lambda==1.125.0
-aws-cdk.aws_events==1.125.0
-aws-cdk.aws_events_targets==1.125.0
-aws-cdk.aws_s3==1.125.0
+aws-cdk-lib
 
 -r backend/infrastructure/requirements.txt
 -r backend/runtime/requirements.txt

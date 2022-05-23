@@ -1,17 +1,17 @@
 import os
-from aws_cdk import (core,
-                     aws_s3_deployment as s3deploy,
+import aws_cdk as cdk
+from aws_cdk import (aws_s3_deployment as s3deploy,
                      aws_events as events,
                      aws_lambda as lambda_,
                      aws_events_targets as targets,
                      aws_s3 as s3)
 
 
-class FrontEndApp(core.Stack):
-    def __init__(self, app: core.App, id: str, stage: str, **kwargs):
+class FrontEndApp(cdk.Stack):
+    def __init__(self, app: cdk.App, id: str, stage: str, **kwargs):
         super().__init__(app, id, **kwargs)
 
-        stage_parameter = core.CfnParameter(
+        stage_parameter = cdk.CfnParameter(
             self,
             "DeploymentStage",
             default=stage,
@@ -28,7 +28,7 @@ class FrontEndApp(core.Stack):
             "bucket-tv-web",
             bucket_name=bucket_name,
             public_read_access=True,
-            removal_policy=core.RemovalPolicy.DESTROY,
+            removal_policy=cdk.RemovalPolicy.DESTROY,
             website_index_document="index.html",
             auto_delete_objects=True)
 
@@ -48,7 +48,7 @@ class FrontEndApp(core.Stack):
         #     "TokenLambda",
         #     code=lambda_.InlineCode(handler_code),
         #     handler="index.main",
-        #     timeout=core.Duration.seconds(300),
+        #     timeout=cdk.Duration.seconds(300),
         #     runtime=lambda_.Runtime.PYTHON_3_7,
         # )
         #
@@ -68,7 +68,7 @@ class FrontEndApp(core.Stack):
         # )
         # rule.add_target(targets.LambdaFunction(lambdaFn))
 
-        self.bucket_name = core.CfnOutput(
+        self.bucket_name = cdk.CfnOutput(
             self, "BucketURL",
             description="The bucket url for the web files.",
             value=bucket.bucket_website_domain_name
