@@ -34,18 +34,19 @@ class PipelineStack(cdk.Stack):
             authentication=cdk.SecretValue.secrets_manager("github-hiptv-pipeline"),
         )
 
-        # pipeline = CodePipeline(
-        #     self,
-        #     "Pipeline",
-        #     cross_account_keys=False,
-        #     # important: https://docs.aws.amazon.com/cdk/api/latest/python/aws_cdk.pipelines/README.html#a-note-on-cost
-        #     pipeline_name="HipTvPipeline",
-        #     synth=ShellStep("Synth",
-        #                     input=source,
-        #                     commands=[
-        #                         # npm cdk synth
-        #                     ],
-        #                     env={}
-        #                     ),
-        # )
+        pipeline = CodePipeline(
+            self,
+            "Pipeline",
+            pipeline_name="HipTvPipeline",
+            # important: https://docs.aws.amazon.com/cdk/api/latest/python/aws_cdk.pipelines/README.html#a-note-on-cost
+            synth=ShellStep("Synth",
+                            input=source,
+                            commands=[
+                                "npm install -g aws-cdk",
+                                "python -m pip install -r requirements-dev.txt",
+                                "cdk synth"
+                            ],
+                            env={}
+                            ),
+        )
 
