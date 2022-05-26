@@ -1,5 +1,5 @@
 chalice
-chalice[cdk]
+chalice[cdkv2]
 aws-cdk-lib
 
 -r backend/infrastructure/requirements.txt
