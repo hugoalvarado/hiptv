@@ -31,7 +31,7 @@ class PipelineStack(cdk.Stack):
         source = CodePipelineSource.git_hub(
             "{}/{}".format(gh_owner, gh_repo),
             gh_branch,
-            authentication=cdk.SecretValue.secrets_manager("github-hiptv-pipeline"),
+            authentication=cdk.SecretValue.secrets_manager("hiptv-github-token"),
         )
 
         pipeline = CodePipeline(
